@@ -11,8 +11,8 @@
 
 BOT_NAME = 'TonyScraper'
 
-SPIDER_MODULES = ['TonyScraper.spiders']
-NEWSPIDER_MODULE = 'TonyScraper.spiders'
+SPIDER_MODULES = ['tonyscraper.spiders']
+NEWSPIDER_MODULE = 'tonyscraper.spiders'
 
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
@@ -47,13 +47,13 @@ ROBOTSTXT_OBEY = True
 # Enable or disable spider middlewares
 # See http://scrapy.readthedocs.org/en/latest/topics/spider-middleware.html
 #SPIDER_MIDDLEWARES = {
-#    'TonyScraper.middlewares.TonyscraperSpiderMiddleware': 543,
+#    'tonyscraper.middlewares.TonyscraperSpiderMiddleware': 543,
 #}
 
 # Enable or disable downloader middlewares
 # See http://scrapy.readthedocs.org/en/latest/topics/downloader-middleware.html
 #DOWNLOADER_MIDDLEWARES = {
-#    'TonyScraper.middlewares.MyCustomDownloaderMiddleware': 543,
+#    'tonyscraper.middlewares.MyCustomDownloaderMiddleware': 543,
 #}
 
 # Enable or disable extensions
@@ -65,7 +65,7 @@ ROBOTSTXT_OBEY = True
 # Configure item pipelines
 # See http://scrapy.readthedocs.org/en/latest/topics/item-pipeline.html
 #ITEM_PIPELINES = {
-#    'TonyScraper.pipelines.TonyscraperPipeline': 300,
+#    'tonyscraper.pipelines.TonyscraperPipeline': 300,
 #}
 
 # Enable and configure the AutoThrottle extension (disabled by default)
