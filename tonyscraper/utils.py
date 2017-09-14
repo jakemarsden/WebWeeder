@@ -1,4 +1,6 @@
+import json
 import os
+from datetime import datetime
 from typing import Optional
 
 
@@ -28,3 +30,13 @@ def write_text_file(file_path: str, content: str, create_parents: bool = True):
         os.makedirs(os.path.dirname(file_path), exist_ok=True)
     with open(file_path, 'w') as file:
         file.write(content)
+
+
+class DateTimeAwareJsonEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, datetime):
+            return str(obj)
+        try:
+            return super().default(obj)
+        except TypeError:
+            return obj.__dict__
