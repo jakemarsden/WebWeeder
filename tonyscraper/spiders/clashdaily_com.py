@@ -18,6 +18,7 @@ class ClashdailyComSpider(CrawlSpider):
     name = 'clashdaily.com'
 
     rules = [
+        # Allow all pages through as we're already restricting to the correct domain
         Rule(LinkExtractor(allow=['.*']), callback='parse_item', follow=True)
     ]
 
@@ -26,7 +27,6 @@ class ClashdailyComSpider(CrawlSpider):
         self.domain_config: DomainConfig = DOMAINS[1]  # TODO: pass the correct domain config from somewhere else
         self.start_urls = self.domain_config.seed_urls
         self.allowed_domains = [self.domain_config.name]
-        # TODO: actually filter URLs using domain_config.url_patterns
 
     @classmethod
     def get_output_directory(cls, url: str) -> str:
@@ -78,6 +78,6 @@ class ClashdailyComSpider(CrawlSpider):
             err = e
         if result is None:
             self.logger.warning('Unable to parse %s from page: %s' % (msg, url))
-            if err is not None:
-                self.logger.warning(err)
+        if err is not None:
+            self.logger.debug(err)
         return result
