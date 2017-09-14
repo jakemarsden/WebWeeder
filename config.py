@@ -17,6 +17,9 @@ def _range_yr_mth(start_yr: int, end_yr: int = date.today().year) -> List[Tuple[
 # Can be overridden with command-line arguments, otherwise this is the default value
 OUTPUT_DIRECTORY = os.path.join('out')
 
+# Can be overridden with command-line arguments, otherwise this is the default value
+USER_AGENT = 'Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.1)'
+
 DOMAINS: List[DomainConfig] = [
     SimpleDomainConfig(name='altright.com',
                        url_patterns=['https://altright.com/*'],
