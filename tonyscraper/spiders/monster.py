@@ -15,14 +15,14 @@ from tonyscraper.models import PageMetadata
 from tonyscraper.utils import DateTimeAwareJsonEncoder, write_text_file
 
 
-class ClashdailyComSpider(CrawlSpider):
+class MonsterSpider(CrawlSpider):
     # Horrible, horrible hack... I feel ashamed. Unsure how to pass in the domain any other way, although I'm sure it
     # must be possible.
     next_instance_domain: DomainConfig = None
 
     def __init__(self):
-        domain = ClashdailyComSpider.next_instance_domain
-        ClashdailyComSpider.next_instance_domain = None
+        domain = MonsterSpider.next_instance_domain
+        MonsterSpider.next_instance_domain = None
         if domain is None:
             raise TypeError
 

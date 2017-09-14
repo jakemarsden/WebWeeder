@@ -6,7 +6,7 @@ from scrapy.utils.log import configure_logging
 
 import config
 from tonyscraper import cli_vars
-from tonyscraper.spiders.clashdaily_com import ClashdailyComSpider
+from tonyscraper.spiders.monster import MonsterSpider
 
 
 @click.command()
@@ -26,7 +26,7 @@ def crawl(outdir, useragent, loglevel):
 
     process = CrawlerProcess(settings)
 
-    ClashdailyComSpider.next_instance_domain = config.DOMAINS[1]  # TODO: don't hardcode which domain
-    process.crawl(ClashdailyComSpider)
+    MonsterSpider.next_instance_domain = config.DOMAINS[1]  # TODO: don't hardcode which domain
+    process.crawl(MonsterSpider)
 
     process.start()  # Blocks until the crawler finishes
