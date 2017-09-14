@@ -39,7 +39,11 @@ class DomainConfig:
         self.article_content_selector: Optional[str] = article_content_selector
 
     def includes_url(self, url: str) -> bool:
-        return any(re.compile(pattern).match(url) for pattern in self.url_patterns)
+        for pattern in self.url_patterns:
+            regex = re.compile(pattern)
+            if regex.match(url) is not None:
+                return True
+        return False
 
     def scrape_article_title(self, soup: BeautifulSoup) -> Optional[str]:
         raise NotImplementedError
