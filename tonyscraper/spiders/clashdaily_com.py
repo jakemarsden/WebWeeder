@@ -59,19 +59,13 @@ class ClashdailyComSpider(CrawlSpider):
         meta.directory = self.get_output_directory(url)
         meta.file_metadata = 'metadata.json'
         meta.file_raw_html = 'raw.html'
-        meta.file_article_html = 'raw_article.html'
         meta.file_article_plaintext = 'plaintext_article.txt'
 
         meta_json = json.dumps(meta, indent=4, sort_keys=False, cls=DateTimeAwareJsonEncoder)
         raw_html = response.text
-        raw_article = self._try_get(url, 'article content', lambda: domain.scrape_article_content(soup))
 
         write_text_file(os.path.join(OUTPUT_DIRECTORY, meta.directory, meta.file_metadata), meta_json)
         write_text_file(os.path.join(OUTPUT_DIRECTORY, meta.directory, meta.file_raw_html), raw_html)
-
-        # FIXME
-        # if raw_article is not None:
-        #    write_text_file(os.path.join(OUTPUT_DIRECTORY, meta.directory, meta.file_article_html), raw_article)
 
         return {'url': url, 'matches': True}
 

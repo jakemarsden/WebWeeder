@@ -51,27 +51,19 @@ class DomainConfig:
     def scrape_article_date(self, soup: BeautifulSoup) -> Optional[datetime]:
         raise NotImplementedError
 
-    def scrape_article_content(self, soup: BeautifulSoup) -> Optional[str]:
-        raise NotImplementedError
-
     def scrape_page_title(self, soup: BeautifulSoup) -> Optional[str]:
         raise NotImplementedError
 
 
 class SimpleDomainConfig(DomainConfig):
     @classmethod
-    def select_element(cls, soup: BeautifulSoup, selector: str) -> Optional[BeautifulSoup]:
-        if selector is not None:
-            return soup.select_one(selector)
-        return None
-
-    @classmethod
     def select_text(cls, soup: BeautifulSoup, selector: str) -> Optional[str]:
-        element = cls.select_element(soup, selector)
-        if element is not None:
-            text = element.get_text()
-            if text is not None:
-                return text.strip()
+        if selector is not None:
+            element = soup.select_one(selector)
+            if element is not None:
+                text = element.get_text()
+                if text is not None:
+                    return text.strip()
         return None
 
     def parse_date(self, date_str: str) -> datetime:
@@ -88,9 +80,6 @@ class SimpleDomainConfig(DomainConfig):
         if date_str is not None:
             return self.parse_date(date_str)
         return None
-
-    def scrape_article_content(self, soup: BeautifulSoup) -> Optional[str]:
-        return self.select_text(soup, self.article_content_selector)
 
     def scrape_page_title(self, soup: BeautifulSoup) -> Optional[str]:
         return self.select_text(soup, self.page_title_selector)

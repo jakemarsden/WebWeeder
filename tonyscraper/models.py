@@ -12,5 +12,4 @@ class PageMetadata:
         self.directory: str = None
         self.file_metadata: str = None
         self.file_raw_html: str = None
-        self.file_article_html: str = None
         self.file_article_plaintext = None
