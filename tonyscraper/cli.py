@@ -25,5 +25,8 @@ def crawl(outdir, useragent, loglevel):
     configure_logging(settings)
 
     process = CrawlerProcess(settings)
+
+    ClashdailyComSpider.next_instance_domain = config.DOMAINS[1]  # TODO: don't hardcode which domain
     process.crawl(ClashdailyComSpider)
+
     process.start()  # Blocks until the crawler finishes

@@ -9,25 +9,31 @@ from pathvalidate import sanitize_file_path
 from scrapy.linkextractors import LinkExtractor
 from scrapy.spiders import CrawlSpider, Rule
 
-from config import DOMAINS, OUTPUT_DIRECTORY
+from config import OUTPUT_DIRECTORY
 from tonyscraper.domainconfig import DomainConfig
 from tonyscraper.models import PageMetadata
 from tonyscraper.utils import DateTimeAwareJsonEncoder, write_text_file
 
 
 class ClashdailyComSpider(CrawlSpider):
-    name = 'clashdaily.com'
+    # Horrible, horrible hack... I feel ashamed. Unsure how to pass in the domain any other way, although I'm sure it
+    # must be possible.
+    next_instance_domain: DomainConfig = None
 
-    rules = [
-        # Allow all pages through as we're already restricting to the correct domain
-        Rule(LinkExtractor(allow=['.*']), callback='parse_item', follow=True)
-    ]
+    def __init__(self):
+        domain = ClashdailyComSpider.next_instance_domain
+        ClashdailyComSpider.next_instance_domain = None
+        if domain is None:
+            raise TypeError
 
-    def __init__(self, *a, **kw):
-        super().__init__(*a, **kw)
-        self.domain_config: DomainConfig = DOMAINS[1]  # TODO: pass the correct domain config from somewhere else
-        self.start_urls = self.domain_config.seed_urls
-        self.allowed_domains = [self.domain_config.name]
+        super().__init__(name=domain.name,
+                         start_urls=domain.seed_urls,
+                         allowed_domains=[domain.name],
+                         rules=[
+                             Rule(LinkExtractor(allow=['.*']), callback='parse_item', follow=True)
+                         ])
+
+        self.domain_config: DomainConfig = domain
 
     @classmethod
     def get_output_directory(cls, url: str) -> str:
