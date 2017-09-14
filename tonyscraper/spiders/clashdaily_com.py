@@ -1,5 +1,6 @@
 import json
 import os
+import traceback
 from datetime import datetime
 from typing import Optional, Callable
 
@@ -71,13 +72,12 @@ class ClashdailyComSpider(CrawlSpider):
 
     def _try_get(self, url: str, msg: str, func: Callable[[], object]) -> Optional[object]:
         result = None
-        err = None
         try:
             result = func()
-        except Exception as e:
-            err = e
-        if result is None:
-            self.logger.warning('Unable to parse %s from page: %s' % (msg, url))
-        if err is not None:
-            self.logger.debug(err)
+        except Exception:
+            self.logger.warning('Unable to parse %s: %s' % (msg, url))
+            self.logger.debug(traceback.format_exc())
+        else:
+            if result is None:
+                self.logger.warning('Unable to parse %s: %s' % (msg, url))
         return result
