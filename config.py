@@ -14,7 +14,7 @@ def _range_yr_mth(start_yr: int, end_yr: int = date.today().year) -> List[Tuple[
     return [(yr, mth) for yr in range(start_yr, end_yr + 1) for mth in range(1, 13)]
 
 
-OUTPUT_DIRECTORY = os.path.join('..', 'out')
+OUTPUT_DIRECTORY = os.path.join('out')
 
 DOMAINS: List[DomainConfig] = [
     SimpleDomainConfig(name='altright.com',
