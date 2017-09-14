@@ -8,7 +8,8 @@
 import scrapy
 
 
-class TonyscraperItem(scrapy.Item):
-    # define the fields for your item here like:
-    # name = scrapy.Field()
-    pass
+class PageItem(scrapy.Item):
+    url = scrapy.Field()
+    title = scrapy.Field()
+    html = scrapy.Field()
+    plaintext = scrapy.Field()
