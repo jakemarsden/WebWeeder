@@ -9,6 +9,7 @@ setup(
         'beautifulsoup4',
         'bs4',
         'pathvalidate',
+        'python-dateutil',
         'scrapy'
     ]
 )
