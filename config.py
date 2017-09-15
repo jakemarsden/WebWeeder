@@ -15,6 +15,10 @@ OUTPUT_DIRECTORY = os.path.join('out')
 # Can be overridden with command-line arguments, otherwise this is the default value
 USER_AGENT = 'Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.1)'
 
+# Can be overridden with command-line arguments, otherwise this is the default value
+# Determines which parser BeautifulSoup4 will use to parse documents
+HTML_PARSER = 'lxml'
+
 DOMAINS: List[DomainConfig] = [
     SimpleDomainConfig(name='altright.com',
                        url_patterns=[r'^https?://(www\.)?altright.com/[0-9]{4}/[0-9]{2}/[0-9]{2}/[^/]+/?$'],

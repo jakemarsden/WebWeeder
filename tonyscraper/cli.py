@@ -18,8 +18,10 @@ from tonyscraper.utils import delete_directory
 @click.option('--clean', is_flag=True, help=cli_vars.HELP_CLEAN)
 @click.option('--outdir', default=config.OUTPUT_DIRECTORY, type=click.Path(file_okay=False), help=cli_vars.HELP_OUTDIR)
 @click.option('--useragent', default=config.USER_AGENT, type=str, help=cli_vars.HELP_USERAGENT)
+@click.option('--parser', default=config.HTML_PARSER, type=click.Choice(cli_vars.CHOICE_PARSERS),
+              help=cli_vars.HELP_PARSER)
 @click.option('--loglevel', default='INFO', type=click.Choice(cli_vars.CHOICE_LOGLEVEL), help=cli_vars.HELP_LOGLEVEL)
-def crawl(domains, alldomains, clean, outdir, useragent, loglevel):
+def crawl(domains, alldomains, clean, outdir, useragent, parser, loglevel):
     # TODO: docstring for command-line help and example usage
 
     click.echo()
@@ -44,6 +46,7 @@ def crawl(domains, alldomains, clean, outdir, useragent, loglevel):
     click.echo()
 
     config.OUTPUT_DIRECTORY = outdir
+    config.HTML_PARSER = parser
     os.makedirs(outdir, exist_ok=True)
 
     settings = {

@@ -10,6 +10,8 @@ setup(
         'beautifulsoup4',
         'bs4',
         'click',
+        'html5lib',
+        'lxml',
         'pathvalidate',
         'python-dateutil',
         'scrapy'

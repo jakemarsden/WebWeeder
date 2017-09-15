@@ -9,7 +9,7 @@ from pathvalidate import sanitize_file_path
 from scrapy.linkextractors import LinkExtractor
 from scrapy.spiders import CrawlSpider, Rule
 
-from config import OUTPUT_DIRECTORY
+import config
 from tonyscraper.domainconfig import DomainConfig
 from tonyscraper.models import PageMetadata
 from tonyscraper.utils import DateTimeAwareJsonEncoder, write_text_file
@@ -54,7 +54,7 @@ class MonsterSpider(CrawlSpider):
 
         self.logger.info('Crawler found: %s' % url)
 
-        soup = BeautifulSoup(response.text)
+        soup = BeautifulSoup(response.text, config.HTML_PARSER)
 
         meta = PageMetadata()
         meta.domain = domain.name
@@ -71,8 +71,8 @@ class MonsterSpider(CrawlSpider):
         meta_json = json.dumps(meta, indent=4, sort_keys=False, cls=DateTimeAwareJsonEncoder)
         raw_html = response.text
 
-        write_text_file(os.path.join(OUTPUT_DIRECTORY, meta.directory, meta.file_metadata), meta_json)
-        write_text_file(os.path.join(OUTPUT_DIRECTORY, meta.directory, meta.file_raw_html), raw_html)
+        write_text_file(os.path.join(config.OUTPUT_DIRECTORY, meta.directory, meta.file_metadata), meta_json)
+        write_text_file(os.path.join(config.OUTPUT_DIRECTORY, meta.directory, meta.file_raw_html), raw_html)
 
         return {'url': url, 'matches': True}
 
