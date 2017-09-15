@@ -1,16 +1,23 @@
+import getpass
 import os
+import socket
+from datetime import date, datetime
+from logging import getLogger, DEBUG
+from logging.handlers import RotatingFileHandler
 from typing import List, Optional
 
 import click
 from scrapy.crawler import CrawlerProcess
-from scrapy.utils.log import configure_logging
+from scrapy.utils.log import get_scrapy_root_handler, configure_logging
 
 import config
 from tonyscraper import cli_vars
 from tonyscraper.domainconfig import DomainConfig
 from tonyscraper.spiders.monster import MonsterSpider
 from tonyscraper.stats import StatsMonitor
-from tonyscraper.utils import delete_directory, find_duplicates
+from tonyscraper.utils import delete_directory, find_duplicates, MEGABYTES
+
+_logger = getLogger(__name__)
 
 
 @click.command()
@@ -23,11 +30,14 @@ from tonyscraper.utils import delete_directory, find_duplicates
               help=cli_vars.HELP_STATSINTERVAL)
 @click.option('--parser', default=config.HTML_PARSER, type=click.Choice(cli_vars.CHOICE_PARSERS),
               help=cli_vars.HELP_PARSER)
-@click.option('--loglevel', default='INFO', type=click.Choice(cli_vars.CHOICE_LOGLEVEL), help=cli_vars.HELP_LOGLEVEL)
-def crawl(domains, alldomains, clean, outdir, useragent, statsinterval, parser, loglevel):
+@click.option('--loglevel', default=config.LOG_LEVEL, type=click.Choice(cli_vars.CHOICE_LOGLEVEL),
+              help=cli_vars.HELP_LOGLEVEL)
+@click.option('--logdir', default=config.LOG_DIRECTORY, type=click.Path(file_okay=False), help=cli_vars.HELP_LOGDIR)
+def crawl(domains, alldomains, clean, outdir, useragent, statsinterval, parser, loglevel, logdir):
     # TODO: docstring for command-line help and example usage
 
-    _configure(outdir, useragent, statsinterval, parser, loglevel)
+    _configure(outdir, useragent, statsinterval, parser, loglevel, logdir)
+    _log_system_info()
     click.echo()
 
     # Clean the output directory if it's the ONLY thing we need to do
@@ -65,11 +75,13 @@ def crawl(domains, alldomains, clean, outdir, useragent, statsinterval, parser, 
     process.start()  # Blocks until the spiders finish
 
 
-def _configure(outdir, useragent, statsinterval, parser, loglevel):
+def _configure(outdir, useragent, statsinterval, parser, loglevel, logdir):
     config.OUTPUT_DIRECTORY = outdir
     config.USER_AGENT = useragent
     config.STATS_INTERVAL = statsinterval
     config.HTML_PARSER = parser
+    config.LOG_LEVEL = loglevel
+    config.LOG_DIRECTORY = logdir
     config.SCRAPY_SETTINGS = {
         'BOT_NAME': 'TonyScraper',
         'ROBOTSTXT_OBEY': True,
@@ -77,8 +89,16 @@ def _configure(outdir, useragent, statsinterval, parser, loglevel):
         'USER_AGENT': useragent
     }
 
-    configure_logging(config.SCRAPY_SETTINGS)
     os.makedirs(outdir, exist_ok=True)
+    os.makedirs(logdir, exist_ok=True)
+
+    configure_logging(config.SCRAPY_SETTINGS)
+
+    log_file_path = os.path.join(config.LOG_DIRECTORY, date.today().strftime('%Y-%m-%d.log'))
+    file_handler = RotatingFileHandler(filename=log_file_path, maxBytes=(50 * MEGABYTES), backupCount=100)
+    file_handler.setFormatter(get_scrapy_root_handler().formatter)
+    file_handler.setLevel(DEBUG)
+    getLogger().addHandler(file_handler)
 
 
 def _find_domain_config(name: str) -> Optional[DomainConfig]:
@@ -122,3 +142,23 @@ def _validate_domains(domains: List[str], alldomains: bool) -> Optional[List[str
         return None
 
     return domains
+
+
+def _log_system_info():
+    try:
+        hostname = socket.gethostname()
+    except:
+        hostname = ''
+    try:
+        username = getpass.getuser()
+    except:
+        username = ''
+    _logger.debug('')
+    _logger.debug('        ------------------------------------')
+    _logger.debug('        |    APPLICATION LAUNCH            |')
+    _logger.debug('        |    %s    |' % datetime.now().isoformat())
+    _logger.debug('        ------------------------------------')
+    _logger.debug('        Hostname:  %s' % hostname)
+    _logger.debug('        Username:  %s' % username)
+    _logger.debug('        Directory: %s' % os.getcwd())
+    _logger.debug('')
