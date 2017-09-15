@@ -46,27 +46,48 @@ class DomainConfig:
         return False
 
     def scrape_article_title(self, soup: BeautifulSoup) -> Optional[str]:
+        """
+        If 'article_title_selector' is None, None is returned
+        If 'article_title_selector' is not None, the scraped article title is returned
+        If 'article_title_selector' is not None but the article title cannot be scraped, an error is raised
+        """
         raise NotImplementedError
 
     def scrape_article_date(self, soup: BeautifulSoup) -> Optional[datetime]:
+        """
+        If 'article_date_selector' is None, None is returned
+        If 'article_date_selector' is not None, the scraped article date is returned
+        If 'article_date_selector' is not None but the article date cannot be scraped, an error is raised
+        """
         raise NotImplementedError
 
     def scrape_page_title(self, soup: BeautifulSoup) -> Optional[str]:
+        """
+        If 'page_title_selector' is None, None is returned
+        If 'page_title_selector' is not None, the scraped page title is returned
+        If 'page_title_selector' is not None but the page title cannot be scraped, an error is raised
+        """
         raise NotImplementedError
 
 
 class SimpleDomainConfig(DomainConfig):
     @classmethod
-    def select_text(cls, soup: BeautifulSoup, selector: str) -> Optional[str]:
-        if selector is not None:
-            element = soup.select_one(selector)
-            if element is not None:
-                text = element.get_text()
-                if text is not None:
-                    return text.strip()
-        return None
+    def select_text(cls, soup: BeautifulSoup, selector: Optional[str]) -> Optional[str]:
+        """
+        If the given selector is None, None is returned
+        If the given selector is not None, text from the matching element is returned
+        If the given selector is not None but it doesn't match anything, an error is raised
+        """
+        if selector is None:
+            return None
+        element = soup.select_one(selector)
+        text = element.get_text()
+        return text.strip()
 
     def parse_date(self, date_str: str) -> datetime:
+        """
+        Raises if the given date string cannot be parsed
+        """
         for junk in self.article_date_junk:
             date_str = re.sub(junk, '', date_str, flags=re.IGNORECASE)
             date_str = date_str.strip()
@@ -77,9 +98,7 @@ class SimpleDomainConfig(DomainConfig):
 
     def scrape_article_date(self, soup: BeautifulSoup) -> Optional[datetime]:
         date_str = self.select_text(soup, self.article_date_selector)
-        if date_str is not None:
-            return self.parse_date(date_str)
-        return None
+        return self.parse_date(date_str) if (date_str is not None) else None
 
     def scrape_page_title(self, soup: BeautifulSoup) -> Optional[str]:
         return self.select_text(soup, self.page_title_selector)

@@ -84,13 +84,12 @@ class MonsterSpider(CrawlSpider):
         return {'url': url, 'matches': True}
 
     def _try_get(self, url: str, msg: str, func: Callable[[], object]) -> Optional[object]:
-        result = None
+        """
+        Convenience method to wrap calls to DomainConfig 'scrape_*' methods so we can handle errors properly
+        """
         try:
-            result = func()
+            return func()
         except Exception:
-            self.logger.warning('Unable to parse %s: %s' % (msg, url))
-            self.logger.info(traceback.format_exc())
-        else:
-            if result is None:
-                self.logger.warning('Unable to parse %s: %s' % (msg, url))
-        return result
+            self.logger.warning('Unable to parse %s, there may be an issue with your config: %s' % (msg, url))
+            self.logger.debug(traceback.format_exc())
+        return None
