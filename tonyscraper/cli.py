@@ -1,4 +1,6 @@
+import getpass
 import os
+import socket
 from datetime import datetime
 from logging import getLogger, DEBUG
 from logging.handlers import RotatingFileHandler
@@ -14,6 +16,8 @@ from tonyscraper.domainconfig import DomainConfig
 from tonyscraper.spiders.monster import MonsterSpider
 from tonyscraper.stats import StatsMonitor
 from tonyscraper.utils import delete_directory, find_duplicates, MEGABYTES
+
+_logger = getLogger(__name__)
 
 
 @click.command()
@@ -32,6 +36,7 @@ def crawl(domains, alldomains, clean, outdir, useragent, statsinterval, parser, 
     # TODO: docstring for command-line help and example usage
 
     _configure(outdir, useragent, statsinterval, parser, loglevel, logdir)
+    _log_system_info()
     click.echo()
 
     # Clean the output directory if it's the ONLY thing we need to do
@@ -135,3 +140,23 @@ def _validate_domains(domains: List[str], alldomains: bool) -> Optional[List[str
         return None
 
     return domains
+
+
+def _log_system_info():
+    try:
+        hostname = socket.gethostname()
+    except:
+        hostname = ''
+    try:
+        username = getpass.getuser()
+    except:
+        username = ''
+    _logger.debug('')
+    _logger.debug('        ------------------------------------')
+    _logger.debug('        |    APPLICATION LAUNCH            |')
+    _logger.debug('        |    %s    |' % datetime.now().isoformat())
+    _logger.debug('        ------------------------------------')
+    _logger.debug('        Hostname:  %s' % hostname)
+    _logger.debug('        Username:  %s' % username)
+    _logger.debug('        Directory: %s' % os.getcwd())
+    _logger.debug('')
