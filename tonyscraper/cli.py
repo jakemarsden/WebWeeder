@@ -9,22 +9,36 @@ import config
 from tonyscraper import cli_vars
 from tonyscraper.domainconfig import DomainConfig
 from tonyscraper.spiders.monster import MonsterSpider
+from tonyscraper.utils import delete_directory
 
 
 @click.command()
 @click.argument('domains', nargs=-1)
 @click.option('--alldomains', is_flag=True, help=cli_vars.HELP_ALLDOMAINS)
+@click.option('--clean', is_flag=True, help=cli_vars.HELP_CLEAN)
 @click.option('--outdir', default=config.OUTPUT_DIRECTORY, type=click.Path(file_okay=False), help=cli_vars.HELP_OUTDIR)
 @click.option('--useragent', default=config.USER_AGENT, type=str, help=cli_vars.HELP_USERAGENT)
 @click.option('--loglevel', default='INFO', type=click.Choice(cli_vars.CHOICE_LOGLEVEL), help=cli_vars.HELP_LOGLEVEL)
-def crawl(domains, alldomains, outdir, useragent, loglevel):
+def crawl(domains, alldomains, clean, outdir, useragent, loglevel):
     # TODO: docstring for command-line help and example usage
+
+    click.echo()
+
+    if clean:
+        if len(domains) == 0 and (not alldomains):
+            click.echo(cli_vars.MSG_CLEANING_AND_EXITING)
+            delete_directory(outdir, preserve_dir=True)
+            return
 
     domains = _validate_domains(domains, alldomains)
     if domains is None:
         return
 
-    click.echo()
+    if clean:
+        click.echo(cli_vars.MSG_CLEANING)
+        delete_directory(outdir, preserve_dir=True)
+        click.echo()
+
     click.echo('You are about to crawl these domains: %r' % domains)
     click.confirm('Continue crawling %d domains?' % len(domains), abort=True)
     click.echo()

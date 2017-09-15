@@ -32,6 +32,33 @@ def write_text_file(file_path: str, content: str, create_parents: bool = True):
         file.write(content)
 
 
+def delete_directory(dir_path: str, preserve_dir: bool = False, missing_ok: bool = True):
+    """
+    Removes the specified directory recursively if it exists
+    :param preserve_dir: Set to True to preserve the top-level directory
+    :param dir_path: The path of the directory to delete
+    :param missing_ok: If the specified directory doesn't exist and this is False, a FileNotFoundError will be thrown.
+    :return:
+    """
+    if not os.path.exists(dir_path):
+        if not missing_ok:
+            raise FileNotFoundError
+        return
+    else:
+        if not os.path.isdir(dir_path):
+            raise FileNotFoundError  # It's a file?
+
+    for item in os.listdir(dir_path):
+        item_path = os.path.join(dir_path, item)
+        if os.path.isfile(item_path):
+            os.unlink(item_path)
+        else:
+            delete_directory(item_path, preserve_dir=False, missing_ok=False)
+
+    if not preserve_dir:
+        os.rmdir(dir_path)
+
+
 class DateTimeAwareJsonEncoder(json.JSONEncoder):
     def default(self, obj):
         if isinstance(obj, datetime):
