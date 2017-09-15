@@ -1,6 +1,6 @@
 import os
 from datetime import date
-from typing import List
+from typing import Dict, List
 
 from tonyscraper.domainconfig import DomainConfig, SimpleDomainConfig
 from tonyscraper.utils import date_range
@@ -18,6 +18,9 @@ USER_AGENT = 'Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.1)'
 # Can be overridden with command-line arguments, otherwise this is the default value
 # Determines which parser BeautifulSoup4 will use to parse documents
 HTML_PARSER = 'lxml'
+
+# The settings given to Scrapy for crawling. Must be set by CLI on program start
+SCRAPY_SETTINGS: Dict[str, object] = None
 
 DOMAINS: List[DomainConfig] = [
     SimpleDomainConfig(name='altright.com',

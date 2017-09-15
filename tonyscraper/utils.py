@@ -1,7 +1,19 @@
 import json
 import os
 from datetime import date, datetime, timedelta
-from typing import List, Optional
+from typing import List, Optional, Set
+
+
+def find_duplicates(test_list: List[object]) -> Set[object]:
+    """
+    :param test_list:
+    :return: The set of items in the given list which were present more than once
+    """
+    duplicates = list(test_list)
+    uniques = set(test_list)
+    for unique in uniques:
+        duplicates.remove(unique)  # Only removes first matching
+    return set(duplicates)
 
 
 def date_range(start: date, end: date = date.today()) -> List[date]:
