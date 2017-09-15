@@ -82,7 +82,7 @@ class MonsterSpider(CrawlSpider):
             result = func()
         except Exception:
             self.logger.warning('Unable to parse %s: %s' % (msg, url))
-            self.logger.debug(traceback.format_exc())
+            self.logger.info(traceback.format_exc())
         else:
             if result is None:
                 self.logger.warning('Unable to parse %s: %s' % (msg, url))
