@@ -1,7 +1,7 @@
 import getpass
 import os
 import socket
-from datetime import datetime
+from datetime import date, datetime
 from logging import getLogger, DEBUG
 from logging.handlers import RotatingFileHandler
 from typing import List, Optional
@@ -92,7 +92,7 @@ def _configure(outdir, useragent, statsinterval, parser, loglevel, logdir):
 
     configure_logging(config.SCRAPY_SETTINGS)
 
-    log_file_path = os.path.join(config.LOG_DIRECTORY, datetime.now().strftime('%Y-%m-%d %H:%M:%S.log'))
+    log_file_path = os.path.join(config.LOG_DIRECTORY, date.today().strftime('%Y-%m-%d.log'))
     file_handler = RotatingFileHandler(filename=log_file_path, maxBytes=(50 * MEGABYTES), backupCount=100)
     file_handler.setFormatter(get_scrapy_root_handler().formatter)
     file_handler.setLevel(DEBUG)
