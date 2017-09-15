@@ -30,7 +30,8 @@ _logger = getLogger(__name__)
               help=cli_vars.HELP_STATSINTERVAL)
 @click.option('--parser', default=config.HTML_PARSER, type=click.Choice(cli_vars.CHOICE_PARSERS),
               help=cli_vars.HELP_PARSER)
-@click.option('--loglevel', default='INFO', type=click.Choice(cli_vars.CHOICE_LOGLEVEL), help=cli_vars.HELP_LOGLEVEL)
+@click.option('--loglevel', default=config.LOG_LEVEL, type=click.Choice(cli_vars.CHOICE_LOGLEVEL),
+              help=cli_vars.HELP_LOGLEVEL)
 @click.option('--logdir', default=config.LOG_DIRECTORY, type=click.Path(file_okay=False), help=cli_vars.HELP_LOGDIR)
 def crawl(domains, alldomains, clean, outdir, useragent, statsinterval, parser, loglevel, logdir):
     # TODO: docstring for command-line help and example usage
@@ -79,6 +80,7 @@ def _configure(outdir, useragent, statsinterval, parser, loglevel, logdir):
     config.USER_AGENT = useragent
     config.STATS_INTERVAL = statsinterval
     config.HTML_PARSER = parser
+    config.LOG_LEVEL = loglevel
     config.LOG_DIRECTORY = logdir
     config.SCRAPY_SETTINGS = {
         'BOT_NAME': 'TonyScraper',

@@ -24,6 +24,9 @@ STATS_INTERVAL = 10
 HTML_PARSER = 'lxml'
 
 # Can be overridden with command-line arguments, otherwise this is the default value
+LOG_LEVEL = 'INFO'
+
+# Can be overridden with command-line arguments, otherwise this is the default value
 # Determines where log files are stored
 LOG_DIRECTORY = os.path.join('logs')
 
