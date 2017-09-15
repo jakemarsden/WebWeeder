@@ -47,6 +47,8 @@ def crawl(domains, alldomains, clean, outdir, useragent, loglevel):
     os.makedirs(outdir, exist_ok=True)
 
     settings = {
+        'BOT_NAME': 'TonyScraper',
+        'ROBOTSTXT_OBEY': True,
         'LOG_LEVEL': loglevel,
         'USER_AGENT': useragent
     }
