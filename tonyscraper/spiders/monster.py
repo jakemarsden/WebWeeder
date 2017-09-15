@@ -19,12 +19,15 @@ class MonsterSpider(CrawlSpider):
     # Horrible, horrible hack... I feel ashamed. Unsure how to pass in the domain any other way, although I'm sure it
     # must be possible.
     next_instance_domain: DomainConfig = None
+    next_instance_callback: Callable[[str], None] = None
 
     def __init__(self):
         domain = MonsterSpider.next_instance_domain
         MonsterSpider.next_instance_domain = None
         if domain is None:
             raise TypeError
+        callback = MonsterSpider.next_instance_callback
+        MonsterSpider.next_instance_callback = None
 
         super().__init__(name=domain.name,
                          start_urls=domain.seed_urls,
@@ -34,6 +37,7 @@ class MonsterSpider(CrawlSpider):
                          ])
 
         self.domain_config: DomainConfig = domain
+        self.on_crawl_callback: Callable[[str], None] = callback
 
     @classmethod
     def get_output_directory(cls, url: str) -> str:
@@ -73,6 +77,9 @@ class MonsterSpider(CrawlSpider):
 
         write_text_file(os.path.join(config.OUTPUT_DIRECTORY, meta.directory, meta.file_metadata), meta_json)
         write_text_file(os.path.join(config.OUTPUT_DIRECTORY, meta.directory, meta.file_raw_html), raw_html)
+
+        if self.on_crawl_callback is not None:
+            self.on_crawl_callback(domain.name)
 
         return {'url': url, 'matches': True}
 

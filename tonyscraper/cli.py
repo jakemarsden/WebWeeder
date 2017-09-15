@@ -1,4 +1,5 @@
 import os
+from datetime import timedelta
 from typing import List, Optional
 
 import click
@@ -9,6 +10,7 @@ import config
 from tonyscraper import cli_vars
 from tonyscraper.domainconfig import DomainConfig
 from tonyscraper.spiders.monster import MonsterSpider
+from tonyscraper.stats import StatsMonitor
 from tonyscraper.utils import delete_directory, find_duplicates
 
 
@@ -50,10 +52,14 @@ def crawl(domains, alldomains, clean, outdir, useragent, parser, loglevel):
     click.confirm('Continue crawling %d domains?' % len(domains), abort=True)
     click.echo()
 
+    # Keeps track of statistics
+    stats = StatsMonitor(log_period=timedelta(seconds=10))
+
     # Create and start the spiders specified by the user
     process = CrawlerProcess(config.SCRAPY_SETTINGS)
     for domain in domains:
         MonsterSpider.next_instance_domain = _find_domain_config(domain)
+        MonsterSpider.next_instance_callback = stats.on_page_crawled
         process.crawl(MonsterSpider)
     process.start()  # Blocks until the spiders finish
 
