@@ -33,8 +33,8 @@ class StatsMonitor:
             # Time to log now
             self._next_log_time = (now + self.log_period)
 
-            for (domain, stats) in self.stats.items():
-                stats.log_stats(now, _logger)
+            for k in sorted(self.stats.keys()):
+                self.stats.get(k).log_stats(now, _logger)
 
     def _get_stats_for(self, domain: str) -> 'DomainStats':
         if domain not in self.stats:
