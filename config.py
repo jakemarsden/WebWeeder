@@ -7,7 +7,7 @@ from tonyscraper.utils import date_range
 
 _START_DATE = date(2013, 1, 1)
 _END_DATE = date.today()
-_DATES: List[date] = reversed(date_range(_START_DATE, _END_DATE))
+_DATES: List[date] = [d for d in reversed(date_range(_START_DATE, _END_DATE))]
 
 # Can be overridden with command-line arguments, otherwise this is the default value
 OUTPUT_DIRECTORY = os.path.join('out')
@@ -33,7 +33,7 @@ DOMAINS: List[DomainConfig] = [
     SimpleDomainConfig(name='clashdaily.com',
                        url_patterns=[r'^https?://(www\.)?clashdaily.com/[0-9]{4}/[0-9]{2}/[^/]+/?$'],
                        # Seed with each daily summary page
-                       seed_urls=['https://clashdaily.com/%04d/%02d/%0d2/' % (d.year, d.month, d.day) for d in _DATES],
+                       seed_urls=['https://clashdaily.com/%04d/%02d/%02d/' % (d.year, d.month, d.day) for d in _DATES],
                        article_title_selector='h1.wpdev-single-title',
                        article_date_selector='span.wpdev-article-date',
                        # Formats seen in the wild:
