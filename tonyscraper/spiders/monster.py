@@ -2,7 +2,7 @@ import json
 import os
 import traceback
 from datetime import datetime
-from typing import Optional, Callable
+from typing import Callable, Optional
 
 from bs4 import BeautifulSoup
 from pathvalidate import sanitize_file_path
