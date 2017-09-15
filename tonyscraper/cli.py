@@ -24,6 +24,11 @@ def crawl(domains, alldomains, outdir, useragent, loglevel):
     if domains is None:
         return
 
+    click.echo()
+    click.echo('You are about to crawl these domains: %r' % domains)
+    click.confirm('Continue crawling %d domains?' % len(domains), abort=True)
+    click.echo()
+
     config.OUTPUT_DIRECTORY = outdir
     os.makedirs(outdir, exist_ok=True)
 
