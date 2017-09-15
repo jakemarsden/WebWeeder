@@ -1,5 +1,4 @@
 import os
-from datetime import timedelta
 from typing import List, Optional
 
 import click
@@ -20,13 +19,15 @@ from tonyscraper.utils import delete_directory, find_duplicates
 @click.option('--clean', is_flag=True, help=cli_vars.HELP_CLEAN)
 @click.option('--outdir', default=config.OUTPUT_DIRECTORY, type=click.Path(file_okay=False), help=cli_vars.HELP_OUTDIR)
 @click.option('--useragent', default=config.USER_AGENT, type=str, help=cli_vars.HELP_USERAGENT)
+@click.option('--statsinterval', default=config.STATS_INTERVAL, type=click.IntRange(min=-1),
+              help=cli_vars.HELP_STATSINTERVAL)
 @click.option('--parser', default=config.HTML_PARSER, type=click.Choice(cli_vars.CHOICE_PARSERS),
               help=cli_vars.HELP_PARSER)
 @click.option('--loglevel', default='INFO', type=click.Choice(cli_vars.CHOICE_LOGLEVEL), help=cli_vars.HELP_LOGLEVEL)
-def crawl(domains, alldomains, clean, outdir, useragent, parser, loglevel):
+def crawl(domains, alldomains, clean, outdir, useragent, statsinterval, parser, loglevel):
     # TODO: docstring for command-line help and example usage
 
-    _configure(outdir, useragent, parser, loglevel)
+    _configure(outdir, useragent, statsinterval, parser, loglevel)
     click.echo()
 
     # Clean the output directory if it's the ONLY thing we need to do
@@ -53,7 +54,7 @@ def crawl(domains, alldomains, clean, outdir, useragent, parser, loglevel):
     click.echo()
 
     # Keeps track of statistics
-    stats = StatsMonitor(log_period=timedelta(seconds=10))
+    stats = StatsMonitor()
 
     # Create and start the spiders specified by the user
     process = CrawlerProcess(config.SCRAPY_SETTINGS)
@@ -64,9 +65,10 @@ def crawl(domains, alldomains, clean, outdir, useragent, parser, loglevel):
     process.start()  # Blocks until the spiders finish
 
 
-def _configure(outdir, useragent, parser, loglevel):
+def _configure(outdir, useragent, statsinterval, parser, loglevel):
     config.OUTPUT_DIRECTORY = outdir
     config.USER_AGENT = useragent
+    config.STATS_INTERVAL = statsinterval
     config.HTML_PARSER = parser
     config.SCRAPY_SETTINGS = {
         'BOT_NAME': 'TonyScraper',

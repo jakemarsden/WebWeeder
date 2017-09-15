@@ -2,18 +2,16 @@ from datetime import datetime, timedelta
 from logging import getLogger, Logger
 from typing import Dict, Optional
 
+import config
+
 _logger = getLogger(__name__)
 
 
 class StatsMonitor:
     # TODO: ensure class is thread safe
-    def __init__(self, log_period: Optional[timedelta]):
-        """
-        :param log_period: How often statistics should be logged, or None to disable logging
-        """
+    def __init__(self):
         self.stats: Dict[str, DomainStats] = {}
         self.combined_stats: DomainStats = DomainStats(None)
-        self.log_period: Optional[timedelta] = log_period
         self._next_log_time = None
 
     def on_page_crawled(self, domain: str):
@@ -26,13 +24,14 @@ class StatsMonitor:
         """
         Log statistics if it's time to do so
         """
-        if self.log_period is None:
+        log_interval = self._get_log_interval()
+        if log_interval is None:
             # Logging is disabled
             return
         now = datetime.utcnow()
         if (self._next_log_time is None) or (now >= self._next_log_time):
             # Time to log now
-            self._next_log_time = (now + self.log_period)
+            self._next_log_time = (now + log_interval)
 
             for k in sorted(self.stats.keys()):
                 self.stats.get(k).log_stats(now, _logger)
@@ -42,6 +41,14 @@ class StatsMonitor:
         if domain not in self.stats:
             self.stats[domain] = DomainStats(domain)
         return self.stats.get(domain)
+
+    @staticmethod
+    def _get_log_interval() -> Optional[timedelta]:
+        """
+        :return: How often statistics should be logged, or None if disabled
+        """
+        interval = config.STATS_INTERVAL
+        return timedelta(seconds=interval) if (interval != -1) else None
 
 
 class DomainStats:
