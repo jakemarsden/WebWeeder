@@ -1,18 +1,13 @@
 import os
 from datetime import date
-from typing import List, Tuple
+from typing import List
 
 from tonyscraper.domainconfig import DomainConfig, SimpleDomainConfig
+from tonyscraper.utils import date_range
 
-
-def _range_yr_mth(start_yr: int, end_yr: int = date.today().year) -> List[Tuple[int, int]]:
-    """
-    :param start_yr:
-    :param end_yr:
-    :return: A list of tuples containing all month/year combinations in the given range of years (inclusive)
-    """
-    return [(yr, mth) for yr in range(start_yr, end_yr + 1) for mth in range(1, 13)]
-
+_START_DATE = date(2013, 1, 1)
+_END_DATE = date.today()
+_DATES: List[date] = reversed(date_range(_START_DATE, _END_DATE))
 
 # Can be overridden with command-line arguments, otherwise this is the default value
 OUTPUT_DIRECTORY = os.path.join('out')
@@ -29,9 +24,8 @@ DOMAINS: List[DomainConfig] = [
                        article_content_selector='div.article-content'),
     SimpleDomainConfig(name='clashdaily.com',
                        url_patterns=[r'^https?://(www\.)?clashdaily.com/[0-9]{4}/[0-9]{2}/[^/]+/?$'],
-                       # Seed with every single monthly summary page since 2013
-                       seed_urls=[('https://clashdaily.com/%04d/%02d/' % yr_mth)
-                                  for yr_mth in reversed(_range_yr_mth(2013))],
+                       # Seed with each daily summary page
+                       seed_urls=['https://clashdaily.com/%04d/%02d/%0d2/' % (d.year, d.month, d.day) for d in _DATES],
                        article_title_selector='h1.wpdev-single-title',
                        article_date_selector='span.wpdev-article-date',
                        # Formats seen in the wild:

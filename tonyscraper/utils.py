@@ -1,7 +1,17 @@
 import json
 import os
-from datetime import datetime
-from typing import Optional
+from datetime import date, datetime, timedelta
+from typing import List, Optional
+
+
+def date_range(start: date, end: date = date.today()) -> List[date]:
+    """
+    :param start:
+    :param end:
+    :return: Every possible date between start and end, inclusive
+    """
+    delta = (end - start)
+    return [(start + timedelta(days=i)) for i in range(delta.days + 1)]
 
 
 def read_text_file(file_path: str, missing_ok: bool = True) -> Optional[str]:
