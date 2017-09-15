@@ -17,10 +17,11 @@ USER_AGENT = 'Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.1)'
 
 DOMAINS: List[DomainConfig] = [
     SimpleDomainConfig(name='altright.com',
-                       url_patterns=['https://altright.com/*'],
-                       seed_urls=['https://altright.com'],
+                       url_patterns=[r'^https?://(www\.)?altright.com/[0-9]{4}/[0-9]{2}/[0-9]{2}/[^/]+/?$'],
+                       # Seed with each daily summary page
+                       seed_urls=['https://altright.com/%04d/%02d/%02d/' % (d.year, d.month, d.day) for d in _DATES],
                        article_title_selector='h3.post-title',
-                       article_date_selector='div.date > a:first-child',
+                       article_date_selector='.post-meta div.date > a',
                        article_content_selector='div.article-content'),
     SimpleDomainConfig(name='clashdaily.com',
                        url_patterns=[r'^https?://(www\.)?clashdaily.com/[0-9]{4}/[0-9]{2}/[^/]+/?$'],
