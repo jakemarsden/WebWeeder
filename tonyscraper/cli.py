@@ -13,14 +13,15 @@ from tonyscraper.spiders.monster import MonsterSpider
 
 @click.command()
 @click.argument('domains', nargs=-1)
+@click.option('--alldomains', is_flag=True, help=cli_vars.HELP_ALLDOMAINS)
 @click.option('--outdir', default=config.OUTPUT_DIRECTORY, type=click.Path(file_okay=False), help=cli_vars.HELP_OUTDIR)
 @click.option('--useragent', default=config.USER_AGENT, type=str, help=cli_vars.HELP_USERAGENT)
 @click.option('--loglevel', default='INFO', type=click.Choice(cli_vars.CHOICE_LOGLEVEL), help=cli_vars.HELP_LOGLEVEL)
-def crawl(domains, outdir, useragent, loglevel):
+def crawl(domains, alldomains, outdir, useragent, loglevel):
     # TODO: docstring for command-line help and example usage
 
-    domains = sorted(domains)
-    if not _validate_domains(domains):
+    domains = _validate_domains(domains, alldomains)
+    if domains is None:
         return
 
     config.OUTPUT_DIRECTORY = outdir
@@ -49,16 +50,29 @@ def _find_domain_config(name: str) -> Optional[DomainConfig]:
     return None
 
 
-def _validate_domains(domains: List[str]) -> bool:
+def _validate_domains(domains: List[str], alldomains: bool) -> Optional[List[str]]:
+    """
+    :param domains: List of domains the user has specified to crawl
+    :param alldomains True if the user is trying to crawl every configured domain
+    :return: A list of valid domains to crawl, or "None" if there was a validation problem
+    """
+    if alldomains:
+        if len(domains) != 0:
+            click.echo(cli_vars.ERROR_ALLDOMAINS_WITH_LIST)
+            return None
+        domains = [domain_config.name for domain_config in config.DOMAINS]
+
     if len(domains) == 0:
         click.echo(cli_vars.ERROR_NO_DOMAIN_SPECIFIED)
-        return False
+        return None
+
+    domains = sorted(domains)
 
     duplicates = _find_duplicates(domains)
     for duplicate in duplicates:
         click.echo(cli_vars.ERROR_DUPLICATE_DOMAINS % duplicate)
     if len(duplicates) != 0:
-        return False
+        return None
 
     all_configured = True
     for domain in domains:
@@ -67,9 +81,9 @@ def _validate_domains(domains: List[str]) -> bool:
             click.echo(cli_vars.ERROR_UNCONFIGURED_DOMAIN % domain)
             all_configured = False
     if not all_configured:
-        return False
+        return None
 
-    return True
+    return domains
 
 
 def _find_duplicates(test_list: List[object]) -> Set[object]:
