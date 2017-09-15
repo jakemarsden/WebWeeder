@@ -3,6 +3,12 @@ import os
 from datetime import date, datetime, timedelta
 from typing import List, Optional, Set
 
+BYTES: int = 1
+KILOBYTES: int = (1024 * BYTES)
+MEGABYTES: int = (1024 * KILOBYTES)
+GIGABYTES: int = (1024 * MEGABYTES)
+TERABYTES: int = (1024 * GIGABYTES)
+
 
 def find_duplicates(test_list: List[object]) -> Set[object]:
     """

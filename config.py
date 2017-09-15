@@ -23,6 +23,10 @@ STATS_INTERVAL = 10
 # Determines which parser BeautifulSoup4 will use to parse documents
 HTML_PARSER = 'lxml'
 
+# Can be overridden with command-line arguments, otherwise this is the default value
+# Determines where log files are stored
+LOG_DIRECTORY = os.path.join('logs')
+
 # The settings given to Scrapy for crawling. Must be set by CLI on program start
 SCRAPY_SETTINGS: Dict[str, object] = None
 

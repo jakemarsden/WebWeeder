@@ -14,6 +14,7 @@ HELP_STATSINTERVAL = 'How often to log statistics, in seconds. Set to "-1" to di
 HELP_PARSER = 'Which parser BeautifulSoup4 should use to parse crawled HTML documents. ' \
               'See: https://www.crummy.com/software/BeautifulSoup/bs4/doc/#installing-a-parser for details.'
 HELP_LOGLEVEL = 'Which messages to show on the console. Use DEBUG to show all messages.'
+HELP_LOGDIR = 'The directory to store log files. Overrides any value set in "config.py".'
 
 MSG_CLEANING = 'Cleaning output directory'
 MSG_CLEANING_AND_EXITING = '%s and exiting' % MSG_CLEANING
