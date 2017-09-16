@@ -5,6 +5,10 @@ setup(
     version='0.0.1',
     author='Jake Marsden',
     author_email='jakemarsdenjm@gmail.com',
+    license='MIT',
+    classifiers=[
+        'License :: OSI Approved :: MIT License'
+    ],
     packages=find_packages(),
     install_requires=[
         'beautifulsoup4',
