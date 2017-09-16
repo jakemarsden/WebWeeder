@@ -36,8 +36,13 @@ _logger = getLogger(__name__)
 def crawl(domains, alldomains, clean, outdir, useragent, statsinterval, parser, loglevel, logdir):
     # TODO: docstring for command-line help and example usage
 
+    msg = 'crawl: domains=%r, alldomains=%r, clean=%r, outdir=%r, useragent=%r, statsinterval=%r, parser=%r, ' \
+          'logfile=%r, logdir=%r' \
+          % (domains, alldomains, clean, outdir, useragent, statsinterval, parser, loglevel, logdir)
+
     _configure(outdir, useragent, statsinterval, parser, loglevel, logdir)
     _log_system_info()
+    _logger.debug(msg)
     click.echo()
 
     # Clean the output directory if it's the ONLY thing we need to do
