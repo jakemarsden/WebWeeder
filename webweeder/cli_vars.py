@@ -20,9 +20,9 @@ MSG_CLEANING = 'Cleaning output directory'
 MSG_CLEANING_AND_EXITING = '%s and exiting' % MSG_CLEANING
 
 ERROR_ALLDOMAINS_WITH_LIST = 'You cannot specify a list of domains when the "--alldomains" flag is used. ' \
-                             'See "tonycrawl --help" for usage.'
-ERROR_NO_DOMAIN_SPECIFIED = 'No domains specified. See "tonycrawl --help" for usage.'
+                             'See "webcrawl --help" for usage.'
+ERROR_NO_DOMAIN_SPECIFIED = 'No domains specified. See "webcrawl --help" for usage.'
 ERROR_UNCONFIGURED_DOMAIN = 'You are trying to crawl the "%s" domain, which hasn\'t been configured. ' \
-                            'Make sure is has an entry in "config.py". See "tonycrawl --help" for usage.'
+                            'Make sure is has an entry in "config.py". See "webcrawl --help" for usage.'
 ERROR_DUPLICATE_DOMAINS = 'You have specified the "%s" domain more than once, which is invalid. ' \
-                          'See "tonycrawl --help" for usage.'
+                          'See "webcrawl --help" for usage.'

@@ -1,7 +1,7 @@
 from setuptools import find_packages, setup
 
 setup(
-    name='TonyScraper',
+    name='WebWeeder',
     version='0.0.1',
     author='Jake Marsden',
     author_email='jakemarsdenjm@gmail.com',
@@ -22,6 +22,6 @@ setup(
     ],
     entry_points="""
         [console_scripts]
-        tonycrawl=tonyscraper.cli:crawl
+        webcrawl=webweeder.cli:crawl
     """
 )

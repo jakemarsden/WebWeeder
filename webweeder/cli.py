@@ -11,11 +11,11 @@ from scrapy.crawler import CrawlerProcess
 from scrapy.utils.log import get_scrapy_root_handler, configure_logging
 
 import config
-from tonyscraper import cli_vars
-from tonyscraper.domainconfig import DomainConfig
-from tonyscraper.spiders.monster import MonsterSpider
-from tonyscraper.stats import StatsMonitor
-from tonyscraper.utils import delete_directory, find_duplicates, MEGABYTES
+from webweeder import cli_vars
+from webweeder.domainconfig import DomainConfig
+from webweeder.spiders.monster import MonsterSpider
+from webweeder.stats import StatsMonitor
+from webweeder.utils import delete_directory, find_duplicates, MEGABYTES
 
 _logger = getLogger(__name__)
 
@@ -83,7 +83,7 @@ def _configure(outdir, useragent, statsinterval, parser, loglevel, logdir):
     config.LOG_LEVEL = loglevel
     config.LOG_DIRECTORY = logdir
     config.SCRAPY_SETTINGS = {
-        'BOT_NAME': 'TonyScraper',
+        'BOT_NAME': 'WebWeeder',
         'ROBOTSTXT_OBEY': True,
         'LOG_LEVEL': loglevel,
         'USER_AGENT': useragent
