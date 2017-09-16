@@ -5,6 +5,7 @@ setup(
     version='0.0.1',
     author='Jake Marsden',
     author_email='jakemarsdenjm@gmail.com',
+    url='https://github.com/jakemarsden/WebWeeder',
     license='MIT',
     classifiers=[
         'License :: OSI Approved :: MIT License'
