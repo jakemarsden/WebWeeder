@@ -10,9 +10,9 @@ from scrapy.linkextractors import LinkExtractor
 from scrapy.spiders import CrawlSpider, Rule
 
 import config
-from tonyscraper.domainconfig import DomainConfig
-from tonyscraper.models import PageMetadata
-from tonyscraper.utils import DateTimeAwareJsonEncoder, write_text_file
+from webweeder.domainconfig import DomainConfig
+from webweeder.models import PageMetadata
+from webweeder.utils import DateTimeAwareJsonEncoder, write_text_file
 
 
 class MonsterSpider(CrawlSpider):

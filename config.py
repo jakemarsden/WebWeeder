@@ -2,8 +2,8 @@ import os
 from datetime import date
 from typing import Dict, List
 
-from tonyscraper.domainconfig import DomainConfig, SimpleDomainConfig
-from tonyscraper.utils import date_range
+from webweeder.domainconfig import DomainConfig, SimpleDomainConfig
+from webweeder.utils import date_range
 
 _START_DATE = date(2013, 1, 1)
 _END_DATE = date.today()
