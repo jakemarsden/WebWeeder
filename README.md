@@ -4,8 +4,8 @@ A command-line tool for crawling and scraping information from websites for disc
 
 There are two main parts to the application:
 
-- `tonycrawl` - Crawls a list of domains, downloads the raw HTML for each matching page and stores it alongside some metadata in JSON format
-- `tonyscrape` - Extracts the required information from the raw HTML files and presents it in a usable format
+- `webcrawl` - Crawls a list of domains, downloads the raw HTML for each matching page and stores it alongside some metadata in JSON format
+- `webweed` - Extracts the required information from the raw HTML files and presents it in a usable format
 - `config.py` - User-editable configuration file which contains configuration defaults and also defines how each domain should be crawled
 
 This is a work in progress.
@@ -27,14 +27,14 @@ Adapt the instructions as needed to suit a Linux system.
 1. Enter these commands (press enter and wait for it to complete after each one):
     1. `python3 -m venv ./venv`
     1. `venv/bin/pip install -e git+https://github.com/jakemarsden/WebWeeder.git ./`
-    1. Ensure it works: `tonycrawl --help`
+    1. Ensure it works: `webcrawl --help`
 
 ### Update
 
 1. Open the `WebWeeder` folder and `Shift+RightClick`->`Open Command Window Here`
 1. Enter these commands (press enter and wait for it to complete after each one):
     1. `venv/bin/pip install -e git+https://github.com/jakemarsden/WebWeeder.git ./`
-    1. Ensure it still works: `tonycrawl --help`
+    1. Ensure it still works: `webcrawl --help`
 
 ### Uninstall
 

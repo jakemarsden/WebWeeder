@@ -22,6 +22,6 @@ setup(
     ],
     entry_points="""
         [console_scripts]
-        tonycrawl=webweeder.cli:crawl
+        webcrawl=webweeder.cli:crawl
     """
 )
