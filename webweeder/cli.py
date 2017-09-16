@@ -83,7 +83,7 @@ def _configure(outdir, useragent, statsinterval, parser, loglevel, logdir):
     config.LOG_LEVEL = loglevel
     config.LOG_DIRECTORY = logdir
     config.SCRAPY_SETTINGS = {
-        'BOT_NAME': 'TonyScraper',
+        'BOT_NAME': 'WebWeeder',
         'ROBOTSTXT_OBEY': True,
         'LOG_LEVEL': loglevel,
         'USER_AGENT': useragent
