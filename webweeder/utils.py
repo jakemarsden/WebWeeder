@@ -42,7 +42,7 @@ def read_text_file(file_path: str, missing_ok: bool = True) -> Optional[str]:
     if missing_ok:
         if not os.path.isfile(file_path):
             return None
-    with open(file_path, 'r') as file:
+    with open(file_path, 'r', encoding='utf8') as file:
         return file.read()
 
 
@@ -56,7 +56,7 @@ def write_text_file(file_path: str, content: str, create_parents: bool = True):
     """
     if create_parents:
         os.makedirs(os.path.dirname(file_path), exist_ok=True)
-    with open(file_path, 'w') as file:
+    with open(file_path, 'w', encoding='utf8') as file:
         file.write(content)
 
 
