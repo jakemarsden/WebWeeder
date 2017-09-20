@@ -18,6 +18,7 @@ setup(
         'html5lib',
         'lxml',
         'pathvalidate',
+        'pypiwin32',  # FIXME: Breaks linux!
         'python-dateutil',
         'scrapy'
     ],
