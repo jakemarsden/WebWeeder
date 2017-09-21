@@ -11,7 +11,7 @@ HELP_CLEAN = 'Set this flag to remove anything in the output directory before cr
 HELP_OUTDIR = 'The directory to store results. Overrides any value set in "config.py".'
 HELP_USERAGENT = 'The user agent string to use for crawling. Overrides any value set in "config.py".'
 HELP_STATSINTERVAL = 'How often to log statistics, in seconds. Set to "-1" to disable statistics logging.'
-HELP_PARSER = 'Which parser BeautifulSoup4 should use to parse crawled HTML documents. ' \
+HELP_PARSER = 'Which parser BeautifulSoup4 should use to parse HTML documents. ' \
               'See: https://www.crummy.com/software/BeautifulSoup/bs4/doc/#installing-a-parser for details.'
 HELP_LOGLEVEL = 'Which messages to show on the console. Use DEBUG to show all messages.'
 HELP_LOGDIR = 'The directory to store log files. Overrides any value set in "config.py".'

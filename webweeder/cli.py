@@ -16,6 +16,7 @@ from webweeder.domainconfig import DomainConfig
 from webweeder.spiders.monster import MonsterSpider
 from webweeder.stats import StatsMonitor
 from webweeder.utils import delete_directory, find_duplicates, MEGABYTES
+from webweeder.weeders.monster import MonsterWeeder
 
 _logger = getLogger(__name__)
 
@@ -78,6 +79,28 @@ def crawl(domains, alldomains, clean, outdir, useragent, statsinterval, parser, 
         MonsterSpider.next_instance_callback = stats.on_page_crawled
         process.crawl(MonsterSpider)
     process.start()  # Blocks until the spiders finish
+
+
+@click.command()
+@click.option('--outdir', default=config.OUTPUT_DIRECTORY, type=click.Path(file_okay=False), help=cli_vars.HELP_OUTDIR)
+@click.option('--parser', default=config.HTML_PARSER, type=click.Choice(cli_vars.CHOICE_PARSERS),
+              help=cli_vars.HELP_PARSER)
+@click.option('--loglevel', default=config.LOG_LEVEL, type=click.Choice(cli_vars.CHOICE_LOGLEVEL),
+              help=cli_vars.HELP_LOGLEVEL)
+@click.option('--logdir', default=config.LOG_DIRECTORY, type=click.Path(file_okay=False), help=cli_vars.HELP_LOGDIR)
+def weed(outdir, parser, loglevel, logdir):
+    # TODO: docstring for command-line help and example usage
+
+    msg = 'weed: outdir=%r, parser=%r, logfile=%r, logdir=%r' \
+          % (outdir, parser, loglevel, logdir)
+
+    _configure(outdir, config.USER_AGENT, config.STATS_INTERVAL, parser, loglevel, logdir)
+    _log_system_info()
+    _logger.debug(msg)
+    click.echo()
+
+    weeder = MonsterWeeder()
+    weeder.weed()
 
 
 def _configure(outdir, useragent, statsinterval, parser, loglevel, logdir):
