@@ -100,7 +100,19 @@ def weed(outdir, parser, loglevel, logdir):
     click.echo()
 
     weeder = MonsterWeeder()
-    weeder.weed()
+
+    _logger.info('Collecting pages to weed from directory: %s' % config.OUTPUT_DIRECTORY)
+    metadatas: List[str] = weeder.find_page_metadatas(config.OUTPUT_DIRECTORY)
+    metadatas.sort()
+
+    for (i, metadata) in enumerate(metadatas):
+        log_info = (_out_of_str(i + 1, len(metadatas)), metadata)
+        _logger.info('Weeding page %s: %s' % log_info)
+        try:
+            weeder.weed_page(config.OUTPUT_DIRECTORY, metadata)
+        except Exception:
+            # Just log the failure with its stack trace
+            _logger.exception('Failed to weed page %s: %s\n' % log_info)
 
 
 def _configure(outdir, useragent, statsinterval, parser, loglevel, logdir):
@@ -183,3 +195,11 @@ def _log_system_info():
     _logger.debug('        Username:  %s' % username)
     _logger.debug('        Directory: %s' % os.getcwd())
     _logger.debug('')
+
+
+def _out_of_str(n1: int, n2: int) -> str:
+    """
+    :return A string in the format [n1 / n2], where "n1" and "n2" are the passed integers padded to the same length
+    """
+    width = len(str(max(n1, n2)))
+    return '[%s / %s]' % (str(n1).rjust(width), str(n2).rjust(width))

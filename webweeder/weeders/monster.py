@@ -11,9 +11,6 @@ from webweeder.models import PageMetadata, page_metadata_from_json
 
 
 class MonsterWeeder:
-    # TODO: better logging, log each page as we process it or something
-    # TODO: better error handling, one screwy HTML file shouldn't prevent weeding the rest
-
     def find_page_metadatas(self, directory: str) -> Iterable[str]:
         """
         :param directory: Where to look for metadata files
@@ -35,7 +32,6 @@ class MonsterWeeder:
         """
         :param base_dir: Top-level directory containing the raw HTML and plaintext files referred to by the metadata
         :param metadata_path: Full path to the metadata (i.e. already joined to base_dir)
-        :return:
         """
         # Read and parse metadata
         meta: PageMetadata = page_metadata_from_json(utils.read_text_file(metadata_path, missing_ok=False))
