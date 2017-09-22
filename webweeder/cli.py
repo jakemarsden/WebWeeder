@@ -12,7 +12,7 @@ from scrapy.utils.log import get_scrapy_root_handler, configure_logging
 
 import config
 from webweeder import cli_vars
-from webweeder.domainconfig import DomainConfig
+from webweeder import configutils
 from webweeder.spiders.monster import MonsterSpider
 from webweeder.stats import StatsMonitor
 from webweeder.utils import delete_directory, find_duplicates, MEGABYTES
@@ -75,7 +75,7 @@ def crawl(domains, alldomains, clean, outdir, useragent, statsinterval, parser, 
     # Create and start the spiders specified by the user
     process = CrawlerProcess(config.SCRAPY_SETTINGS)
     for domain in domains:
-        MonsterSpider.next_instance_domain = _find_domain_config(domain)
+        MonsterSpider.next_instance_domain = configutils.get_config_for_domain(domain)
         MonsterSpider.next_instance_callback = stats.on_page_crawled
         process.crawl(MonsterSpider)
     process.start()  # Blocks until the spiders finish
@@ -129,13 +129,6 @@ def _configure(outdir, useragent, statsinterval, parser, loglevel, logdir):
     getLogger().addHandler(file_handler)
 
 
-def _find_domain_config(name: str) -> Optional[DomainConfig]:
-    for domain_config in config.DOMAINS:
-        if domain_config.name == name:
-            return domain_config
-    return None
-
-
 def _validate_domains(domains: List[str], alldomains: bool) -> Optional[List[str]]:
     """
     :param domains: List of domains the user has specified to crawl
@@ -162,7 +155,7 @@ def _validate_domains(domains: List[str], alldomains: bool) -> Optional[List[str
 
     all_configured = True
     for domain in domains:
-        domain_config = _find_domain_config(domain)
+        domain_config = configutils.get_config_for_domain(domain)
         if domain_config is None:
             click.echo(cli_vars.ERROR_UNCONFIGURED_DOMAIN % domain)
             all_configured = False
