@@ -1,4 +1,3 @@
-import json
 import os
 import traceback
 from datetime import datetime
@@ -11,8 +10,8 @@ from scrapy.spiders import CrawlSpider, Rule
 
 import config
 from webweeder.domainconfig import DomainConfig
-from webweeder.models import PageMetadata
-from webweeder.utils import DateTimeAwareJsonEncoder, write_text_file
+from webweeder.models import PageMetadata, page_metadata_to_json
+from webweeder.utils import write_text_file
 
 
 class MonsterSpider(CrawlSpider):
@@ -72,7 +71,7 @@ class MonsterSpider(CrawlSpider):
         meta.file_raw_html = 'raw.html'
         meta.file_article_plaintext = 'plaintext_article.txt'
 
-        meta_json = json.dumps(meta, indent=4, sort_keys=False, cls=DateTimeAwareJsonEncoder)
+        meta_json = page_metadata_to_json(meta, pretty=True)
         raw_html = response.text
 
         write_text_file(os.path.join(config.OUTPUT_DIRECTORY, meta.directory, meta.file_metadata), meta_json)

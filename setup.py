@@ -25,5 +25,6 @@ setup(
     entry_points="""
         [console_scripts]
         webcrawl=webweeder.cli:crawl
+        webweed=webweeder.cli:weed
     """
 )
