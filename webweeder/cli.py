@@ -12,10 +12,11 @@ from scrapy.utils.log import get_scrapy_root_handler, configure_logging
 
 import config
 from webweeder import cli_vars
-from webweeder.domainconfig import DomainConfig
+from webweeder import configutils
 from webweeder.spiders.monster import MonsterSpider
 from webweeder.stats import StatsMonitor
 from webweeder.utils import delete_directory, find_duplicates, MEGABYTES
+from webweeder.weeders.monster import MonsterWeeder
 
 _logger = getLogger(__name__)
 
@@ -74,10 +75,44 @@ def crawl(domains, alldomains, clean, outdir, useragent, statsinterval, parser, 
     # Create and start the spiders specified by the user
     process = CrawlerProcess(config.SCRAPY_SETTINGS)
     for domain in domains:
-        MonsterSpider.next_instance_domain = _find_domain_config(domain)
+        MonsterSpider.next_instance_domain = configutils.get_config_for_domain(domain)
         MonsterSpider.next_instance_callback = stats.on_page_crawled
         process.crawl(MonsterSpider)
     process.start()  # Blocks until the spiders finish
+
+
+@click.command()
+@click.option('--outdir', default=config.OUTPUT_DIRECTORY, type=click.Path(file_okay=False), help=cli_vars.HELP_OUTDIR)
+@click.option('--parser', default=config.HTML_PARSER, type=click.Choice(cli_vars.CHOICE_PARSERS),
+              help=cli_vars.HELP_PARSER)
+@click.option('--loglevel', default=config.LOG_LEVEL, type=click.Choice(cli_vars.CHOICE_LOGLEVEL),
+              help=cli_vars.HELP_LOGLEVEL)
+@click.option('--logdir', default=config.LOG_DIRECTORY, type=click.Path(file_okay=False), help=cli_vars.HELP_LOGDIR)
+def weed(outdir, parser, loglevel, logdir):
+    # TODO: docstring for command-line help and example usage
+
+    msg = 'weed: outdir=%r, parser=%r, logfile=%r, logdir=%r' \
+          % (outdir, parser, loglevel, logdir)
+
+    _configure(outdir, config.USER_AGENT, config.STATS_INTERVAL, parser, loglevel, logdir)
+    _log_system_info()
+    _logger.debug(msg)
+    click.echo()
+
+    weeder = MonsterWeeder()
+
+    _logger.info('Collecting pages to weed from directory: %s' % config.OUTPUT_DIRECTORY)
+    metadatas: List[str] = weeder.find_page_metadatas(config.OUTPUT_DIRECTORY)
+    metadatas.sort()
+
+    for (i, metadata) in enumerate(metadatas):
+        log_info = (_out_of_str(i + 1, len(metadatas)), metadata)
+        _logger.info('Weeding page %s: %s' % log_info)
+        try:
+            weeder.weed_page(config.OUTPUT_DIRECTORY, metadata)
+        except Exception:
+            # Just log the failure with its stack trace
+            _logger.exception('Failed to weed page %s: %s\n' % log_info)
 
 
 def _configure(outdir, useragent, statsinterval, parser, loglevel, logdir):
@@ -106,13 +141,6 @@ def _configure(outdir, useragent, statsinterval, parser, loglevel, logdir):
     getLogger().addHandler(file_handler)
 
 
-def _find_domain_config(name: str) -> Optional[DomainConfig]:
-    for domain_config in config.DOMAINS:
-        if domain_config.name == name:
-            return domain_config
-    return None
-
-
 def _validate_domains(domains: List[str], alldomains: bool) -> Optional[List[str]]:
     """
     :param domains: List of domains the user has specified to crawl
@@ -139,7 +167,7 @@ def _validate_domains(domains: List[str], alldomains: bool) -> Optional[List[str
 
     all_configured = True
     for domain in domains:
-        domain_config = _find_domain_config(domain)
+        domain_config = configutils.get_config_for_domain(domain)
         if domain_config is None:
             click.echo(cli_vars.ERROR_UNCONFIGURED_DOMAIN % domain)
             all_configured = False
@@ -167,3 +195,11 @@ def _log_system_info():
     _logger.debug('        Username:  %s' % username)
     _logger.debug('        Directory: %s' % os.getcwd())
     _logger.debug('')
+
+
+def _out_of_str(n1: int, n2: int) -> str:
+    """
+    :return A string in the format [n1 / n2], where "n1" and "n2" are the passed integers padded to the same length
+    """
+    width = len(str(max(n1, n2)))
+    return '[%s / %s]' % (str(n1).rjust(width), str(n2).rjust(width))

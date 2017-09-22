@@ -85,13 +85,3 @@ def delete_directory(dir_path: str, preserve_dir: bool = False, missing_ok: bool
 
     if not preserve_dir:
         os.rmdir(dir_path)
-
-
-class DateTimeAwareJsonEncoder(json.JSONEncoder):
-    def default(self, obj):
-        if isinstance(obj, datetime):
-            return str(obj)
-        try:
-            return super().default(obj)
-        except TypeError:
-            return obj.__dict__
