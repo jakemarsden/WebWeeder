@@ -2,6 +2,7 @@ import getpass
 import os
 import socket
 from datetime import date, datetime
+from glob import glob
 from logging import getLogger, DEBUG
 from logging.handlers import RotatingFileHandler
 from typing import List, Optional
@@ -24,7 +25,7 @@ _logger = getLogger(__name__)
 @click.command()
 @click.argument('domains', nargs=-1)
 @click.option('--alldomains', is_flag=True, help=cli_vars.HELP_ALLDOMAINS)
-@click.option('--clean', is_flag=True, help=cli_vars.HELP_CLEAN)
+@click.option('--clean', is_flag=True, help=cli_vars.HELP_CLEAN_CRAWL)
 @click.option('--outdir', default=config.OUTPUT_DIRECTORY, type=click.Path(file_okay=False), help=cli_vars.HELP_OUTDIR)
 @click.option('--useragent', default=config.USER_AGENT, type=str, help=cli_vars.HELP_USERAGENT)
 @click.option('--statsinterval', default=config.STATS_INTERVAL, type=click.IntRange(min=-1),
@@ -82,22 +83,32 @@ def crawl(domains, alldomains, clean, outdir, useragent, statsinterval, parser, 
 
 
 @click.command()
+@click.option('--clean', is_flag=True, help=cli_vars.HELP_CLEAN_WEED)
 @click.option('--outdir', default=config.OUTPUT_DIRECTORY, type=click.Path(file_okay=False), help=cli_vars.HELP_OUTDIR)
 @click.option('--parser', default=config.HTML_PARSER, type=click.Choice(cli_vars.CHOICE_PARSERS),
               help=cli_vars.HELP_PARSER)
 @click.option('--loglevel', default=config.LOG_LEVEL, type=click.Choice(cli_vars.CHOICE_LOGLEVEL),
               help=cli_vars.HELP_LOGLEVEL)
 @click.option('--logdir', default=config.LOG_DIRECTORY, type=click.Path(file_okay=False), help=cli_vars.HELP_LOGDIR)
-def weed(outdir, parser, loglevel, logdir):
+def weed(clean, outdir, parser, loglevel, logdir):
     # TODO: docstring for command-line help and example usage
 
-    msg = 'weed: outdir=%r, parser=%r, logfile=%r, logdir=%r' \
-          % (outdir, parser, loglevel, logdir)
+    msg = 'weed: clean=%r, outdir=%r, parser=%r, logfile=%r, logdir=%r' \
+          % (clean, outdir, parser, loglevel, logdir)
 
     _configure(outdir, config.USER_AGENT, config.STATS_INTERVAL, parser, loglevel, logdir)
     _log_system_info()
     _logger.debug(msg)
     click.echo()
+
+    # Clean the output directory if necessary
+    if clean:
+        click.echo(cli_vars.MSG_CLEANING)
+        file_pattern = os.path.join(config.OUTPUT_DIRECTORY, '**', 'plaintext_article.txt')
+        for file in glob(file_pattern, recursive=True):
+            _logger.debug('Cleaning file: %s' % file)
+            os.remove(file)
+        click.echo()
 
     weeder = MonsterWeeder()
 
