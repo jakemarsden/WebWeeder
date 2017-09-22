@@ -50,12 +50,18 @@ class MonsterWeeder:
     def _extract_article_content(soup: BeautifulSoup, domain: DomainConfig) -> Optional[str]:
         # TODO: Similar to DomainConfig.scrape_* methods, refactor needed?
         """
+        IMPORTANT: This modifies the passed soup
+
         If configured selector is None, None is returned
         If configured selector is not None, the scraped article content is returned
         If configured selector is not None but the article content cannot be scraped, an error is raised
         """
         if domain.article_content_selector is None:
             return None
+        for crap in soup.find_all(name='script'):
+            crap.extract()
+        for crap in soup.find_all(name='style'):
+            crap.extract()
         element = soup.select_one(domain.article_content_selector)
         text = element.get_text()
         return text.strip()
