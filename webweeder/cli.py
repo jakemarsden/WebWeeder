@@ -112,9 +112,14 @@ def weed(clean, outdir, parser, loglevel, logdir):
 
     weeder = MonsterWeeder()
 
-    _logger.info('Collecting pages to weed from directory: %s' % config.OUTPUT_DIRECTORY)
+    _logger.info('Collecting pages to weed...')
     metadatas: List[str] = weeder.find_page_metadatas(config.OUTPUT_DIRECTORY)
     metadatas.sort()
+
+    # Confirm that the user wants to start weeding
+    click.echo('You are about to weed %d pages' % len(metadatas))
+    click.confirm('Continue weeding %d pages?' % len(metadatas), abort=True)
+    click.echo()
 
     for (i, metadata) in enumerate(metadatas):
         log_info = (_out_of_str(i + 1, len(metadatas)), metadata)
