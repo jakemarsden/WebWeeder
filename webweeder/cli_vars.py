@@ -29,3 +29,4 @@ ERROR_UNCONFIGURED_DOMAIN = 'You are trying to crawl the "%s" domain, which hasn
                             'Make sure is has an entry in "config.py". See "webcrawl --help" for usage.'
 ERROR_DUPLICATE_DOMAINS = 'You have specified the "%s" domain more than once, which is invalid. ' \
                           'See "webcrawl --help" for usage.'
+ERROR_NOTHING_TO_WEED = 'There are no pages to weed. Have you tried the "webcrawl" command?'

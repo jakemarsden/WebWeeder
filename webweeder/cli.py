@@ -116,6 +116,12 @@ def weed(clean, outdir, parser, loglevel, logdir):
     metadatas: List[str] = weeder.find_page_metadatas(config.OUTPUT_DIRECTORY)
     metadatas.sort()
 
+    _logger.debug('Collected %d pages to weed: %r' % (len(metadatas), metadatas))
+    if len(metadatas) == 0:
+        click.echo(cli_vars.ERROR_NOTHING_TO_WEED)
+        click.echo()
+        return
+
     # Confirm that the user wants to start weeding
     click.echo('You are about to weed %d pages' % len(metadatas))
     click.confirm('Continue weeding %d pages?' % len(metadatas), abort=True)
