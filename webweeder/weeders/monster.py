@@ -31,19 +31,18 @@ class MonsterWeeder:
                 raise TypeError('Not a file or a directory: %s' % item_path)
         return found_pages
 
-    def weed_page(self, base_dir: str, file: str):
+    def weed_page(self, base_dir: str, metadata_path: str):
         """
-        :param base_dir: Top-level directory containing the raw HTML and plaintext files referenced by the metadata
-        :param file: Full path to the metadata (i.e. already joined to base_dir)
+        :param base_dir: Top-level directory containing the raw HTML and plaintext files referred to by the metadata
+        :param metadata_path: Full path to the metadata (i.e. already joined to base_dir)
         :return:
         """
-        # Read and parse JSON file
-        json_str = utils.read_text_file(file, missing_ok=False)
-        meta: PageMetadata = page_metadata_from_json(json_str)
-
-        domain_config = configutils.get_config_for_domain(meta.domain)
-        if domain_config is None:
-            raise RuntimeError('Unconfigured domain "%s" for page: %r' % (meta.domain, meta))
+        # Read and parse metadata
+        meta: PageMetadata = page_metadata_from_json(utils.read_text_file(metadata_path, missing_ok=False))
+        domain = configutils.get_config_for_domain(meta.domain)
+        if domain is None:
+            msg = 'No configuration found for domain "%s" while weeding page: %s' % (meta.domain, metadata_path)
+            raise RuntimeError(msg)
 
         # Read raw HTML for the page
         raw_html_path = os.path.join(base_dir, meta.directory, meta.file_raw_html)
@@ -51,11 +50,11 @@ class MonsterWeeder:
 
         # Parse HTML and extract plaintext from article
         soup = BeautifulSoup(raw_html, config.HTML_PARSER)
-        plaintext = self._extract_article_content(soup, domain_config)
+        plaintext = self._extract_article_content(soup, domain)
 
-        # Write plaintext to file
+        # Write plaintext to metadata_path
         plaintext_path = os.path.join(base_dir, meta.directory, meta.file_article_plaintext)
-        utils.write_text_file(plaintext_path, plaintext)
+        utils.write_text_file(plaintext_path, plaintext, create_parents=True)
 
     @staticmethod
     def _extract_article_content(soup: BeautifulSoup, domain: DomainConfig) -> Optional[str]:
